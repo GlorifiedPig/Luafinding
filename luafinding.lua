@@ -5,6 +5,8 @@ require( "vector" )
 
 Luafinding = {}
 
+-- To-do: maybe some form of different distance checks for diagonals?
+-- There's something wrong happening in this function, because sometimes close to walls there are huge blobs in the final path.
 local function distance( start, finish )
     local x = math.abs( start.x - finish.x )
     local y = math.abs( start.y - finish.y )
