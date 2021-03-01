@@ -72,7 +72,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
     while next( open ) do
         local current = findLowest( open, fScore )
 
-        if current == finish then return reconstruct( reconstruction, finish ) end
+        if current == finish then return reconstruction end
 
         open[current] = nil
 
