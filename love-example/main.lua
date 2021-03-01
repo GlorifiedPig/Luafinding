@@ -4,7 +4,7 @@ require( "luafinding" )
 
 local map = {}
 
-local mapSize = 3000
+local mapSize = 100
 local function randomizeMap()
     for x = 1, mapSize do
         map[x] = {}
@@ -35,8 +35,8 @@ function love.load()
     randomizeMap()
     local startTime = love.timer.getTime()
     for i = 1, timesToRun do
-        math.randomseed( os.clock() - math.random( 1, 10 ) )
-        Luafinding.FindPath( Vector( math.random( 1, mapSize ) ), Vector( math.random( 1, mapSize ) ), map )
+        math.randomseed( os.clock() )
+        Luafinding.FindPath( Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), map )
     end
     local timeTaken = love.timer.getTime() - startTime
     print( "It took " .. timeTaken .. " seconds to run the pathfinding test " .. timesToRun .. " times." )
