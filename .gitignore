@@ -1,5 +1,8 @@
-*
+/*
+/*/
 !.gitignore
 !luafinding.lua
 !vector.lua
+!/love-example/
 !README.md
+*.lnk
