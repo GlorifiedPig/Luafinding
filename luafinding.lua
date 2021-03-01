@@ -63,7 +63,7 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
+    local open, closed, gScore, hScore, fScore, reconstructionKeys, reconstruction = {}, {}, {}, {}, {}, {}, {}
 
     open[start] = true
     gScore[start] = 0
@@ -82,7 +82,10 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    reconstruction[current] = true
+                    if not reconstructionKeys[current] then
+                        reconstructionKeys[current] = true
+                        table.insert( reconstruction, current )
+                    end
                     gScore[adjacent] = added_gScore
                     if not hScore[adjacent] then
                         hScore[adjacent] = distance( adjacent, finish )
