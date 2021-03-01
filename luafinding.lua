@@ -3,12 +3,7 @@
 
 Luafinding = {}
 
-local function Vector( x, y )
-    return {
-        x = x,
-        y = y
-    }
-end
+local function vector( x, y ) return { x = x, y = y } end
 
 local function positionIsOpen( pos, check )
     if type( check ) == "table" then
@@ -20,16 +15,12 @@ local function positionIsOpen( pos, check )
     return true
 end
 
-local adjacentPositions = {
-    Vector( 0, -1 ), Vector( -1, 0 ), Vector( 0, 1 ), Vector( 1, 0 ), -- Non diagonals
-    Vector( -1, -1 ), Vector( 1, -1 ), Vector( -1, 1 ), Vector( 1, 1 ), -- Diagonals
-}
-
+local adjacentPositions = { vector( 0, -1 ), vector( -1, 0 ), vector( 0, 1 ), vector( 1, 0 ), vector( -1, -1 ), vector( 1, -1 ), vector( -1, 1 ), vector( 1, 1 ) }
 local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     local result = {}
 
     for _, adjacent in ipairs( adjacentPositions ) do
-        local adjacentPos = Vector( pos.x + adjacent.x, pos.y + adjacent.y )
+        local adjacentPos = vector( pos.x + adjacent.x, pos.y + adjacent.y )
         if positionIsOpen( adjacentPos, positionOpenCheck ) then
             table.insert( result, adjacentPos )
         end
