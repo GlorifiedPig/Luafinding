@@ -62,7 +62,7 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
+    local open, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}
 
     open[start] = true
     gScore[start] = 0
@@ -75,22 +75,19 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
         if current == finish then return reconstruct( reconstruction, finish ) end
 
         open[current] = nil
-        closed[current] = true
 
         for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
-            if not closed[adjacent] then
-                local added_gScore = gScore[current] + distance( current, adjacent )
+            local added_gScore = gScore[current] + distance( current, adjacent )
 
-                if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    reconstruction[adjacent] = current
-                    gScore[adjacent] = added_gScore
-                    if not hScore[adjacent] then
-                        hScore[adjacent] = distance( adjacent, finish )
-                    end
-                    fScore[adjacent] = added_gScore + hScore[adjacent]
-
-                    open[adjacent] = true
+            if not gScore[adjacent] or added_gScore < gScore[adjacent] then
+                reconstruction[adjacent] = current
+                gScore[adjacent] = added_gScore
+                if not hScore[adjacent] then
+                    hScore[adjacent] = distance( adjacent, finish )
                 end
+                fScore[adjacent] = added_gScore + hScore[adjacent]
+
+                open[adjacent] = true
             end
         end
     end
