@@ -1,10 +1,30 @@
 
+function printTable( tbl )
+    for k, v in pairs( tbl ) do
+        print( k, v )
+    end
+end
+
+local profile = require( "profile" )
 require( "vector" )
 require( "luafinding" )
 
 local map = {}
 
 local mapSize = 100
+local screenSize = 800
+local tileSize = screenSize / mapSize
+
+local path = nil
+local start = Vector( 1, 1 )
+local finish = Vector( mapSize, mapSize )
+
+local clickedTile = nil
+
+local function updatePath()
+    path = Luafinding.FindPath( start, finish, map )
+end
+
 local function randomizeMap()
     for x = 1, mapSize do
         map[x] = {}
@@ -14,7 +34,7 @@ local function randomizeMap()
     end
 
     math.randomseed( os.clock() )
-    for i = 1, 45 do
+    for i = 1, math.random( 20, 100 ) do
         local x = math.random( 1, mapSize - 2 )
         local y = math.random( 1, mapSize - 2 )
 
@@ -28,16 +48,74 @@ local function randomizeMap()
             end
         end
     end
+
+    updatePath()
 end
 
-local timesToRun = 1000
+local runPerformanceTest = false
+local timesToRun = 100
 function love.load()
+    love.window.setMode( screenSize, screenSize )
     randomizeMap()
-    local startTime = love.timer.getTime()
-    for i = 1, timesToRun do
-        math.randomseed( os.clock() )
-        Luafinding.FindPath( Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), map )
+
+    if runPerformanceTest then
+        profile.start()
+        local startTime = love.timer.getTime()
+        local oneTime = love.timer.getTime()
+        for i = 1, timesToRun do
+            math.randomseed( os.clock() )
+            local startPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
+            local endPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
+            local foundPath = Luafinding.FindPath( startPos, endPos, map )
+            local newOneTime = love.timer.getTime()
+            print("Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
+            oneTime = newOneTime
+        end
+        local timeTaken = love.timer.getTime() - startTime
+        print( "It took " .. timeTaken .. " seconds to run the pathfinding test " .. timesToRun .. " times." )
+        profile.stop()
+        print( "\n\nprofile.lua report:\n" .. profile.report( 10 ) )
     end
-    local timeTaken = love.timer.getTime() - startTime
-    print( "It took " .. timeTaken .. " seconds to run the pathfinding test " .. timesToRun .. " times." )
+end
+
+function love.draw()
+    love.graphics.setColor( 0.5, 0.5, 0.5 )
+    for x = 1, mapSize do
+        for y = 1, mapSize do
+            local fillStyle = "line"
+            if not map[x][y] then fillStyle = "fill" end
+            love.graphics.rectangle( fillStyle, ( x - 1 ) * tileSize, ( y - 1 ) * tileSize, tileSize, tileSize )
+        end
+    end
+
+    if path then
+        for k, v in ipairs( path ) do
+            love.graphics.setColor( 0, 0.8, 0 )
+            love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
+            love.graphics.setColor( 0, 0, 0 )
+        end
+    end
+end
+
+function love.keypressed( key )
+    if key == "escape" then
+        love.event.quit()
+    elseif key == "space" then
+        randomizeMap()
+    end
+end
+
+function love.mousepressed( x, y, button )
+    if button == 1 then
+        local hoveredTile = Vector( math.floor( x / tileSize ) + 1, math.floor( y / tileSize ) + 1 )
+        if not clickedTile then
+            clickedTile = hoveredTile
+            return
+        end
+        start = clickedTile
+        finish = hoveredTile
+        clickedTile = nil
+        hoveredTile = nil
+        updatePath()
+    end
 end
