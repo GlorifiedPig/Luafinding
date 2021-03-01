@@ -5,12 +5,12 @@ require( "vector" )
 
 Luafinding = {}
 
-local short_axis_cost = math.sqrt(2) - 1
+local short_axis_cost = math.sqrt( 2 ) - 1
 
 local function distance( start, finish )
-    local x = math.abs(start.x - finish.x)
-    local y = math.abs(start.y - finish.y)
-    return short_axis_cost * math.min(x, y) + math.max(x, y) -- broadway distance
+    local x = math.abs( start.x - finish.x )
+    local y = math.abs( start.y - finish.y )
+    return short_axis_cost * math.min( x, y ) + math.max( x, y )
 end
 
 local function findLowest( set, scores )
@@ -84,12 +84,12 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
     while next( open ) do
         local current = findLowest( open, fScore )
         open[current] = nil
-        if not closed[tostring(current)] then -- table indexing goes by object id, equal vectors still have different ids.
+        if not closed[tostring(current)] then
             print(current)
 
             if current == finish then return reconstruction end
 
-            closed[tostring(current)] = true -- I've now visited this node, I don't need to try it again later.
+            closed[tostring(current)] = true
 
             for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
                 local added_gScore = gScore[current] + distance( current, adjacent )
