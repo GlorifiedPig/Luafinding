@@ -34,6 +34,15 @@ local function positionIsOpen( pos, check )
     return true
 end
 
+local function reconstruct( reconstruction, current )
+    local path = { current }
+    while reconstruction[current] do
+        current = reconstruction[current]
+        table.insert( path, current )
+    end
+    return path
+end
+
 local adjacentPositions = { Vector( 0, -1 ), Vector( -1, 0 ), Vector( 0, 1 ), Vector( 1, 0 ), Vector( -1, -1 ), Vector( 1, -1 ), Vector( -1, 1 ), Vector( 1, 1 ) }
 local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     local result = {}
@@ -62,7 +71,9 @@ function Luafinding:FindPath( start, finish, positionOpenCheck )
 
     while next( open ) do
         local current = findLowest( open, fScore )
-        if current == finish then return end -- We are finished, we should return a reconstruction table here.
+
+        if current == finish then return reconstruct( reconstruction, finish ) end
+
         open[current] = nil
         closed[current] = true
 
