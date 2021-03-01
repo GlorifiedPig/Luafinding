@@ -1,4 +1,5 @@
 *
 !.gitignore
 !luafinding.lua
+!vector.lua
 !README.md
