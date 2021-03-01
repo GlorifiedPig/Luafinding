@@ -5,12 +5,10 @@ require( "vector" )
 
 Luafinding = {}
 
-local short_axis_cost = math.sqrt( 2 ) - 1
-
 local function distance( start, finish )
     local x = math.abs( start.x - finish.x )
     local y = math.abs( start.y - finish.y )
-    return short_axis_cost * math.min( x, y ) + math.max( x, y )
+    return x * x + y * y
 end
 
 local function findLowest( set, scores )
@@ -34,15 +32,6 @@ local function positionIsOpen( pos, check )
     end
 
     return true
-end
-
-local function reconstruct( reconstruction, current )
-    local path = { current }
-    while reconstruction[tostring( current )] do
-        current = reconstruction[tostring( current )]
-        table.insert( path, current )
-    end
-    return path
 end
 
 local adjacentPositions = {
@@ -85,7 +74,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
         local current = findLowest( open, fScore )
         open[current] = nil
         if not closed[tostring(current)] then
-            if current == finish then return reconstruct( reconstruction, current ) end
+            if current == finish then return reconstruction end
 
             closed[tostring(current)] = true
 
@@ -93,7 +82,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    reconstruction[tostring( adjacent )] = current
+                    reconstruction[current] = true
                     gScore[adjacent] = added_gScore
                     if not hScore[adjacent] then
                         hScore[adjacent] = distance( adjacent, finish )

@@ -89,9 +89,9 @@ function love.draw()
     end
 
     if path then
-        for k, v in ipairs( path ) do
+        for k, v in pairs( path ) do
             love.graphics.setColor( 0, 0.8, 0 )
-            love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
+            love.graphics.rectangle( "fill", ( k.x - 1 ) * tileSize, ( k.y - 1 ) * tileSize, tileSize, tileSize )
             love.graphics.setColor( 0, 0, 0 )
         end
     end
