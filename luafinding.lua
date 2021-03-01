@@ -38,8 +38,8 @@ end
 
 local function reconstruct( reconstruction, current )
     local path = { current }
-    while reconstruction[current] do
-        current = reconstruction[current]
+    while reconstruction[tostring( current )] do
+        current = reconstruction[tostring( current )]
         table.insert( path, current )
     end
     return path
@@ -93,7 +93,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    reconstruction[adjacent] = current
+                    reconstruction[tostring( adjacent )] = current
                     gScore[adjacent] = added_gScore
                     if not hScore[adjacent] then
                         hScore[adjacent] = distance( adjacent, finish )
