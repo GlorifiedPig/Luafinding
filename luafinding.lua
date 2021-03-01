@@ -61,7 +61,7 @@ end
 -- If it's a function it must have a return value of true or false depending on whether or not the position is open.
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
-    if not positionIsOpen( finish, positionOpenCheck ) then return false end
+    if not positionIsOpen( finish, positionOpenCheck ) then return end
     local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
 
     open[start] = true
