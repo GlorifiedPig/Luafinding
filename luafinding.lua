@@ -5,18 +5,20 @@ require( "vector" )
 
 Luafinding = {}
 
+local short_axis_cost = math.sqrt(2) - 1
+
 local function distance( start, finish )
-    local x = start.x - finish.x
-    local y = start.y - finish.y
-    return ( x * x ) + ( y * y )
+    local x = math.abs(start.x - finish.x)
+    local y = math.abs(start.y - finish.y)
+    return short_axis_cost * math.min(x, y) + math.max(x, y) -- broadway distance
 end
 
 local function findLowest( set, scores )
-    local min, lowest = -1, nil
+    local min, lowest = math.huge, nil
 
     for node, _ in pairs( set ) do
         local score = scores[node]
-        if score < min or min < 0 then
+        if score < min then
             min, lowest = score, node
         end
     end
@@ -43,7 +45,17 @@ local function reconstruct( reconstruction, current )
     return path
 end
 
-local adjacentPositions = { Vector( 0, -1 ), Vector( -1, 0 ), Vector( 0, 1 ), Vector( 1, 0 ), Vector( -1, -1 ), Vector( 1, -1 ), Vector( -1, 1 ), Vector( 1, 1 ) }
+local adjacentPositions = {
+    Vector(  0, -1 ),
+    Vector( -1,  0 ),
+    Vector(  0,  1 ),
+    Vector(  1,  0 ),
+    Vector( -1, -1 ),
+    Vector(  1, -1 ),
+    Vector( -1,  1 ),
+    Vector(  1,  1 )
+}
+
 local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     local result = {}
 
@@ -62,7 +74,7 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}
+    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
 
     open[start] = true
     gScore[start] = 0
@@ -71,23 +83,27 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
 
     while next( open ) do
         local current = findLowest( open, fScore )
-
-        if current == finish then return reconstruction end
-
         open[current] = nil
+        if not closed[tostring(current)] then -- table indexing goes by object id, equal vectors still have different ids.
+            print(current)
 
-        for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
-            local added_gScore = gScore[current] + distance( current, adjacent )
+            if current == finish then return reconstruction end
 
-            if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                reconstruction[adjacent] = current
-                gScore[adjacent] = added_gScore
-                if not hScore[adjacent] then
-                    hScore[adjacent] = distance( adjacent, finish )
+            closed[tostring(current)] = true -- I've now visited this node, I don't need to try it again later.
+
+            for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
+                local added_gScore = gScore[current] + distance( current, adjacent )
+
+                if not gScore[adjacent] or added_gScore < gScore[adjacent] then
+                    reconstruction[adjacent] = current
+                    gScore[adjacent] = added_gScore
+                    if not hScore[adjacent] then
+                        hScore[adjacent] = distance( adjacent, finish )
+                    end
+                    fScore[adjacent] = added_gScore + hScore[adjacent]
+
+                    open[adjacent] = true
                 end
-                fScore[adjacent] = added_gScore + hScore[adjacent]
-
-                open[adjacent] = true
             end
         end
     end
