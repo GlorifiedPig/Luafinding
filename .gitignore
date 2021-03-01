@@ -5,4 +5,6 @@
 !vector.lua
 !/love-example/
 !README.md
+love-example/luafinding.lua
+love-example/vector.lua
 *.lnk
