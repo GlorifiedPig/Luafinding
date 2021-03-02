@@ -65,16 +65,22 @@ function love.load()
         local startTime = love.timer.getTime()
         local oneTime = love.timer.getTime()
         math.randomseed( os.clock() )
+
+        local precalculatedPoints = {}
+        for i = 1, timesToRun * 2 do
+            table.insert( precalculatedPoints, Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ) )
+        end
+
         for i = 1, timesToRun do
             if printEveryTest then
-                local startPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
-                local endPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
+                local startPos = table.remove( precalculatedPoints )
+                local endPos = table.remove( precalculatedPoints )
                 local foundPath = Luafinding.FindPath( startPos, endPos, map )
                 local newOneTime = love.timer.getTime()
                 print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
                 oneTime = newOneTime
             else
-                Luafinding.FindPath( Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), map )
+                Luafinding.FindPath( table.remove( precalculatedPoints ), table.remove( precalculatedPoints ), map )
             end
         end
         local timeTaken = love.timer.getTime() - startTime
