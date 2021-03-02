@@ -76,18 +76,25 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
     local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
 
-    open[start] = true
+    open[start] = false
     gScore[start] = 0
     hScore[start] = distance( start, finish )
     fScore[start] = hScore[start]
 
     while next( open ) do
         local current = findLowest( open, fScore )
+        local previous = open[current]
         open[current] = nil
         if not closed[tostring(current)] then -- table indexing goes by object id, equal vectors still have different ids.
-            print(current)
+            reconstruction[tostring(current)] = previous
 
-            if current == finish then return reconstruction end
+            if current == finish then
+                local path = {current}
+                while reconstruction[tostring(path[#path])] do
+                    path[#path + 1] = reconstruction[tostring(path[#path])]
+                end
+                return path, reconstruction
+            end
 
             closed[tostring(current)] = true -- I've now visited this node, I don't need to try it again later.
 
@@ -95,14 +102,13 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    reconstruction[adjacent] = current
                     gScore[adjacent] = added_gScore
                     if not hScore[adjacent] then
                         hScore[adjacent] = distance( adjacent, finish )
                     end
                     fScore[adjacent] = added_gScore + hScore[adjacent]
 
-                    open[adjacent] = true
+                    open[adjacent] = current
                 end
             end
         end
