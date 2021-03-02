@@ -6,7 +6,9 @@ require( "vector" )
 Luafinding = {}
 
 local function distance( start, finish )
-    return math.abs( start.x - finish.x ) * math.abs( start.y - finish.y )
+    local dx = start.x - finish.x
+    local dy = start.y - finish.y
+    return dx * dx + dy * dy
 end
 
 --[[
