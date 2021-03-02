@@ -11,8 +11,8 @@ require( "luafinding" )
 
 local map = {}
 
-local mapSize = 100
-local screenSize = 800
+local mapSize = 50
+local screenSize = 860
 local tileSize = screenSize / mapSize
 
 local path, reconstruction = nil
@@ -79,7 +79,7 @@ function love.load()
 end
 
 function love.draw()
-    love.graphics.setColor( 0.5, 0.5, 0.5 )
+    love.graphics.setColor( 0.3, 0.3, 0.3 )
     for x = 1, mapSize do
         for y = 1, mapSize do
             local fillStyle = "line"
@@ -89,11 +89,11 @@ function love.draw()
     end
 
     if path then
-        love.graphics.setColor( 0, 0.3, 0)
+        love.graphics.setColor( 0, 0.3, 0 )
         for k, v in pairs( reconstruction ) do
             if v then
                 love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
-	          end
+            end
         end
         love.graphics.setColor( 0, 0.8, 0 )
         for k, v in pairs( path ) do
