@@ -5,6 +5,12 @@ require( "vector" )
 
 Luafinding = {}
 
+local function distance( start, finish )
+    return math.abs( start.x - finish.x ) * math.abs( start.y - finish.y )
+end
+
+--[[
+This could maybe be used in the future for shorter distances for more precise measurements, although the above function seems to work much faster and mostly fine.
 
 local short_axis_cost = math.sqrt( 2 ) - 1
 
@@ -13,6 +19,7 @@ local function distance( start, finish )
     local y = math.abs( start.y - finish.y )
     return short_axis_cost * math.min( x, y ) + math.max( x, y )
 end
+]]--
 
 local function findLowest( set, scores )
     local min, lowest = math.huge, nil
