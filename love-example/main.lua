@@ -11,8 +11,8 @@ require( "luafinding" )
 
 local map = {}
 
-local mapSize = 50
-local screenSize = 860
+local mapSize = 100
+local screenSize = 800
 local tileSize = screenSize / mapSize
 
 local path, reconstruction = nil
@@ -53,28 +53,36 @@ local function randomizeMap()
 end
 
 local runPerformanceTest = false
+local printEveryTest = false
+local profileFromProfiler = false
 local timesToRun = 100
 function love.load()
     love.window.setMode( screenSize, screenSize )
     randomizeMap()
 
     if runPerformanceTest then
-        profile.start()
+        if profileFromProfiler then profile.start() end
         local startTime = love.timer.getTime()
         local oneTime = love.timer.getTime()
+        math.randomseed( os.clock() )
         for i = 1, timesToRun do
-            math.randomseed( os.clock() )
-            local startPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
-            local endPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
-            local foundPath = Luafinding.FindPath( startPos, endPos, map )
-            local newOneTime = love.timer.getTime()
-            print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
-            oneTime = newOneTime
+            if printEveryTest then
+                local startPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
+                local endPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
+                local foundPath = Luafinding.FindPath( startPos, endPos, map )
+                local newOneTime = love.timer.getTime()
+                print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
+                oneTime = newOneTime
+            else
+                Luafinding.FindPath( Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ), map )
+            end
         end
         local timeTaken = love.timer.getTime() - startTime
         print( "It took " .. timeTaken .. " seconds to run the pathfinding test " .. timesToRun .. " times." )
-        profile.stop()
-        print( "\n\nprofile.lua report:\n" .. profile.report( 10 ) )
+        if profileFromProfiler then
+            profile.stop()
+            print( "\n\nprofile.lua report:\n" .. profile.report( 10 ) )
+        end
     end
 end
 
