@@ -68,7 +68,7 @@ function love.load()
             local endPos = Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) )
             local foundPath = Luafinding.FindPath( startPos, endPos, map )
             local newOneTime = love.timer.getTime()
-            print("Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
+            print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
             oneTime = newOneTime
         end
         local timeTaken = love.timer.getTime() - startTime
@@ -90,10 +90,10 @@ function love.draw()
 
     if path then
         love.graphics.setColor( 0, 0.3, 0)
-        for k, v in pairs(reconstruction) do
-        	if v then
-	            love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
-	        end
+        for k, v in pairs( reconstruction ) do
+            if v then
+                love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
+	          end
         end
         love.graphics.setColor( 0, 0.8, 0 )
         for k, v in pairs( path ) do
