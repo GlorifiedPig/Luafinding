@@ -5,12 +5,13 @@ require( "vector" )
 
 Luafinding = {}
 
--- To-do: maybe some form of different distance checks for diagonals?
--- There's something wrong happening in this function, because sometimes close to walls there are huge blobs in the final path.
+
+local short_axis_cost = math.sqrt( 2 ) - 1
+
 local function distance( start, finish )
     local x = math.abs( start.x - finish.x )
     local y = math.abs( start.y - finish.y )
-    return x * x + y * y
+    return short_axis_cost * math.min( x, y ) + math.max( x, y )
 end
 
 local function findLowest( set, scores )
@@ -65,18 +66,27 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, gScore, hScore, fScore, reconstructionKeys, reconstruction = {}, {}, {}, {}, {}, {}, {}
+    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
 
-    open[start] = true
+    open[start] = false
     gScore[start] = 0
     hScore[start] = distance( start, finish )
     fScore[start] = hScore[start]
 
     while next( open ) do
         local current = findLowest( open, fScore )
+        local previous = open[current]
         open[current] = nil
         if not closed[tostring(current)] then
-            if current == finish then return reconstruction end
+            reconstruction[tostring(current)] = previous
+
+            if current == finish then
+                local path = {current}
+                while reconstruction[tostring(path[#path])] do
+                    path[#path + 1] = reconstruction[tostring(path[#path])]
+                end
+                return path, reconstruction
+            end
 
             closed[tostring(current)] = true
 
@@ -84,17 +94,13 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    if not reconstructionKeys[current] then
-                        reconstructionKeys[current] = true
-                        table.insert( reconstruction, current )
-                    end
                     gScore[adjacent] = added_gScore
                     if not hScore[adjacent] then
                         hScore[adjacent] = distance( adjacent, finish )
                     end
                     fScore[adjacent] = added_gScore + hScore[adjacent]
 
-                    open[adjacent] = true
+                    open[adjacent] = current
                 end
             end
         end

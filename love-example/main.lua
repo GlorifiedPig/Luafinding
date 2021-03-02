@@ -15,14 +15,14 @@ local mapSize = 100
 local screenSize = 800
 local tileSize = screenSize / mapSize
 
-local path = nil
+local path, reconstruction = nil
 local start = Vector( 1, 1 )
 local finish = Vector( mapSize, mapSize )
 
 local clickedTile = nil
 
 local function updatePath()
-    path = Luafinding.FindPath( start, finish, map )
+    path, reconstruction = Luafinding.FindPath( start, finish, map )
 end
 
 local function randomizeMap()
@@ -89,11 +89,17 @@ function love.draw()
     end
 
     if path then
-        for k, v in pairs( path ) do
-            love.graphics.setColor( 0, 0.8, 0 )
-            love.graphics.rectangle( "fill", ( k.x - 1 ) * tileSize, ( k.y - 1 ) * tileSize, tileSize, tileSize )
-            love.graphics.setColor( 0, 0, 0 )
+        love.graphics.setColor( 0, 0.3, 0)
+        for k, v in pairs( reconstruction ) do
+            if v then
+                love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
+	          end
         end
+        love.graphics.setColor( 0, 0.8, 0 )
+        for k, v in pairs( path ) do
+            love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
+        end
+        love.graphics.setColor( 0, 0, 0 )
     end
 end
 
