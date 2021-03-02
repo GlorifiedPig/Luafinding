@@ -90,10 +90,11 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
             reconstruction[tostring(current)] = previous
 
             if current == finish then
-                local path = {current}
+                local path = { current }
                 while reconstruction[tostring(path[#path])] do
                     path[#path + 1] = reconstruction[tostring(path[#path])]
                 end
+                for i = 1, math.floor( #path / 2 ) do path[i], path[#path - i + 1] = path[#path - i + 1], path[i] end
                 return path, reconstruction
             end
 
