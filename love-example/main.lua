@@ -25,7 +25,7 @@ local function updatePath()
     path, reconstruction = Luafinding.FindPath( start, finish, map )
 end
 
-local function randomizeMap()
+local function randomizeMap( seed )
     for x = 1, mapSize do
         map[x] = {}
         for y = 1, mapSize do
@@ -33,7 +33,7 @@ local function randomizeMap()
         end
     end
 
-    math.randomseed( os.clock() )
+    math.randomseed( seed and seed or os.clock() )
     for i = 1, math.random( 20, 100 ) do
         local x = math.random( 1, mapSize - 2 )
         local y = math.random( 1, mapSize - 2 )
@@ -52,19 +52,20 @@ local function randomizeMap()
     updatePath()
 end
 
-local runPerformanceTest = false
+local runPerformanceTest = true
 local printEveryTest = false
 local profileFromProfiler = false
 local timesToRun = 100
+local seed = os.clock()
 function love.load()
     love.window.setMode( screenSize, screenSize )
-    randomizeMap()
+    randomizeMap( seed )
 
     if runPerformanceTest then
         if profileFromProfiler then profile.start() end
-        local startTime = love.timer.getTime()
-        local oneTime = love.timer.getTime()
-        math.randomseed( os.clock() )
+        local startTime = os.clock()
+        local oneTime = os.clock()
+        math.randomseed( seed )
 
         local precalculatedPoints = {}
         for i = 1, timesToRun * 2 do
@@ -76,14 +77,14 @@ function love.load()
                 local startPos = table.remove( precalculatedPoints )
                 local endPos = table.remove( precalculatedPoints )
                 local foundPath = Luafinding.FindPath( startPos, endPos, map )
-                local newOneTime = love.timer.getTime()
+                local newOneTime = os.clock()
                 print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
                 oneTime = newOneTime
             else
                 Luafinding.FindPath( table.remove( precalculatedPoints ), table.remove( precalculatedPoints ), map )
             end
         end
-        local timeTaken = love.timer.getTime() - startTime
+        local timeTaken = os.clock() - startTime
         print( "It took " .. timeTaken .. " seconds to run the pathfinding test " .. timesToRun .. " times." )
         if profileFromProfiler then
             profile.stop()
