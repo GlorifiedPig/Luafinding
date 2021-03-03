@@ -20,3 +20,5 @@ Not to mention that a lot of Love2D implementations also feature a lot of `O(n)`
 
 ### Love2D Implementation
 To see an example of how this is implemented in Love2D, navigate to the `love2d-example` folder.
+
+![Luafinding in action](https://user-images.githubusercontent.com/7416288/109854935-546bfd00-7c60-11eb-8476-98308bfeb3c0.png)
