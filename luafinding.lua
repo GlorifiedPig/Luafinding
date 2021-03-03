@@ -64,15 +64,14 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, previousTbl, closed, gScore, hScore, fScore, reconstruction = Heap(), {}, {}, {}, {}, {}, {}
+    local open, previousTbl, closed, reconstruction = Heap(), {}, {}, {}
 
-    previousTbl[start] = false
-    gScore[start] = 0
-    hScore[start] = distance( start, finish )
-    fScore[start] = hScore[start]
+    start.gScore = 0
+    start.hScore = distance( start, finish )
+    start.fScore = start.hScore
 
     open.Compare = function( a, b )
-        return fScore[a] < fScore[b]
+        return a.fScore < b.fScore
     end
 
     open:Push( start )
@@ -98,14 +97,14 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
             for i = 1, #adjacents do
                 local adjacent = adjacents[i]
                 if not closed[adjacent:ID()] then
-                    local added_gScore = gScore[current] + distance( current, adjacent )
+                    local added_gScore = current.gScore + distance( current, adjacent )
 
-                    if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                        gScore[adjacent] = added_gScore
-                        if not hScore[adjacent] then
-                            hScore[adjacent] = distance( adjacent, finish )
+                    if not adjacent.gScore or added_gScore < adjacent.gScore then
+                        adjacent.gScore = added_gScore
+                        if not adjacent.hScore then
+                            adjacent.hScore = distance( adjacent, finish )
                         end
-                        fScore[adjacent] = added_gScore + hScore[adjacent]
+                        adjacent.fScore = added_gScore + adjacent.hScore
 
                         open:Push( adjacent )
                         previousTbl[adjacent] = current
