@@ -8,4 +8,6 @@
 !README.md
 love-example/luafinding.lua
 love-example/vector.lua
+performance/luafinding.lua
+performance/vector.lua
 *.lnk
