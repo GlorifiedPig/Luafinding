@@ -25,7 +25,7 @@ local function updatePath()
     path, reconstruction = Luafinding.FindPath( start, finish, map )
 end
 
-local function randomizeMap( seed )
+local function randomizeMap()
     for x = 1, mapSize do
         map[x] = {}
         for y = 1, mapSize do
@@ -33,7 +33,6 @@ local function randomizeMap( seed )
         end
     end
 
-    math.randomseed( seed and seed or os.clock() )
     for i = 1, math.random( 20, 100 ) do
         local x = math.random( 1, mapSize - 2 )
         local y = math.random( 1, mapSize - 2 )
@@ -59,13 +58,13 @@ local timesToRun = 100
 local seed = os.clock()
 function love.load()
     love.window.setMode( screenSize, screenSize )
-    randomizeMap( seed )
+    math.randomseed( seed )
+    randomizeMap()
 
     if runPerformanceTest then
         if profileFromProfiler then profile.start() end
         local startTime = os.clock()
         local oneTime = os.clock()
-        math.randomseed( seed )
 
         local precalculatedPoints = {}
         for i = 1, timesToRun * 2 do
