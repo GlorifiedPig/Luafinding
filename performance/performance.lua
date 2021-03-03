@@ -9,9 +9,9 @@ local mapDensity = 0.65
 
 local seed = os.time()
 math.randomseed( seed )
-print( string.format( "Running with seed %d", seed ) )
+print( string.format( "Using seed %d", seed ) )
 
-print( string.format( "Building a map of %dx%d...", mapSize, mapSize ) )
+print( string.format( "Building %dx%d sized map.", mapSize, mapSize ) )
 for x = 1, mapSize do
     map[x] = {}
     for y = 1, mapSize do
@@ -19,13 +19,13 @@ for x = 1, mapSize do
     end
 end
 
-print( string.format( "Precalculating %d random start/goal positions...", numberOfTests * 2 ) )
+print( string.format( "Generating %d random start/finish positions.", numberOfTests * 2 ) )
 local testPoints = {}
 for i = 1, numberOfTests * 2 do
     table.insert( testPoints, Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ) )
 end
 
-print( string.format( "Finding %d paths...", numberOfTests ) )
+print( string.format( "Finding %d paths.", numberOfTests ) )
 local function positionIsOpenFunc( x, y )
     if not map[x] or not map[x][y] then return false end
     return map[x][y] > mapDensity
