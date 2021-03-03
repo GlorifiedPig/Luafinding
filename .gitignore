@@ -4,6 +4,7 @@
 !luafinding.lua
 !vector.lua
 !/love-example/
+!/performance/
 !README.md
 love-example/luafinding.lua
 love-example/vector.lua
