@@ -110,7 +110,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                     end
                     fScore[adjacent] = added_gScore + hScore[adjacent]
 
-                    open[adjacent] = current
+                    if not closed[adjacent] then open[adjacent] = current end
                 end
             end
         end
