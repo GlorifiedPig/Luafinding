@@ -105,16 +105,18 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
             local adjacents = fetchOpenAdjacentNodes( current, positionOpenCheck )
             for i = 1, #adjacents do
                 local adjacent = adjacents[i]
-                local added_gScore = gScore[current] + distance( current, adjacent )
+                if not closed[adjacent:ID()] then
+                    local added_gScore = gScore[current] + distance( current, adjacent )
 
-                if not gScore[adjacent] or added_gScore < gScore[adjacent] then
-                    gScore[adjacent] = added_gScore
-                    if not hScore[adjacent] then
-                        hScore[adjacent] = distance( adjacent, finish )
+                    if not gScore[adjacent] or added_gScore < gScore[adjacent] then
+                        gScore[adjacent] = added_gScore
+                        if not hScore[adjacent] then
+                            hScore[adjacent] = distance( adjacent, finish )
+                        end
+                        fScore[adjacent] = added_gScore + hScore[adjacent]
+
+                        open[adjacent] = current
                     end
-                    fScore[adjacent] = added_gScore + hScore[adjacent]
-
-                    if not closed[adjacent] then open[adjacent] = current end
                 end
             end
         end
