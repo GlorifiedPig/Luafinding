@@ -45,9 +45,11 @@ function Vector:__tostring()
 end
 
 function Vector:ID()
-    if self._ID then return self._ID end
-    local x, y = self.x, self.y
-    self._ID = 0.5 * ( ( x + y ) * ( x + y + 1 ) + y )
+    if self._ID == nil then
+        local x, y = self.x, self.y
+        self._ID = 0.5 * ( ( x + y ) * ( x + y + 1 ) + y )
+    end
+
     return self._ID
 end
 
