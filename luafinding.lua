@@ -60,7 +60,8 @@ local adjacentPositions = {
 local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     local result = {}
 
-    for _, adjacent in ipairs( adjacentPositions ) do
+    for i = 1, #adjacentPositions do
+    	local adjacent = adjacentPositions[i]
         local adjacentPos = pos + adjacent
         if positionIsOpen( adjacentPos, positionOpenCheck ) then
             table.insert( result, adjacentPos )
@@ -101,7 +102,9 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
 
             closed[currentId] = true
 
-            for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
+            local adjacents = fetchOpenAdjacentNodes( current, positionOpenCheck )
+            for i = 1, #adjacents do
+                local adjacent = adjacents[i]
                 local added_gScore = gScore[current] + distance( current, adjacent )
 
                 if not gScore[adjacent] or added_gScore < gScore[adjacent] then
