@@ -86,19 +86,20 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
         local current = findLowest( open, fScore )
         local previous = open[current]
         open[current] = nil
-        if not closed[tostring(current)] then
-            reconstruction[tostring(current)] = previous
+        local currentId = current:ID()
+        if not closed[currentId] then
+            reconstruction[currentId] = previous
 
             if current == finish then
                 local path = { current }
-                while reconstruction[tostring(path[#path])] do
-                    path[#path + 1] = reconstruction[tostring(path[#path])]
+                while reconstruction[path[#path]:ID()] do
+                    path[#path + 1] = reconstruction[path[#path]:ID()]
                 end
                 for i = 1, math.floor( #path / 2 ) do path[i], path[#path - i + 1] = path[#path - i + 1], path[i] end
                 return path, reconstruction
             end
 
-            closed[tostring(current)] = true
+            closed[currentId] = true
 
             for _, adjacent in ipairs( fetchOpenAdjacentNodes( current, positionOpenCheck ) ) do
                 local added_gScore = gScore[current] + distance( current, adjacent )

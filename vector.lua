@@ -44,4 +44,9 @@ function Vector:__tostring()
     return "(" .. self.x .. ", " .. self.y .. ")"
 end
 
+function Vector:ID()
+    local x, y = self.x, self.y
+    return 0.5 * ( ( x + y ) * ( x + y + 1 ) + y )
+end
+
 return setmetatable( Vector, { __call = function( _, ... ) return newVector( ... ) end } )
