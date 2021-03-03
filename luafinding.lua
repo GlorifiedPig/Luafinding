@@ -75,17 +75,18 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
+    local open, closed, previousTbl, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}, {}
 
-    open[start] = false
+    table.insert( open, start )
+    previousTbl[open] = false
     gScore[start] = 0
     hScore[start] = distance( start, finish )
     fScore[start] = hScore[start]
 
-    while next( open ) do
-        local current = findLowest( open, fScore )
-        local previous = open[current]
-        open[current] = nil
+    while #open > 0 do
+        table.sort( open, function( a, b ) return fScore[a] > fScore[b] end )
+        local current = table.remove( open )
+        local previous = previousTbl[current]
         if not closed[tostring(current)] then
             reconstruction[tostring(current)] = previous
 
@@ -110,7 +111,8 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                     end
                     fScore[adjacent] = added_gScore + hScore[adjacent]
 
-                    open[adjacent] = current
+                    table.insert( open, adjacent )
+                    previousTbl[adjacent] = current
                 end
             end
         end
