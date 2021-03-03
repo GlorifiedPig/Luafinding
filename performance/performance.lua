@@ -1,6 +1,7 @@
 
 require( "vector" )
 require( "luafinding" )
+
 local map = {}
 local mapSize = 100
 local numberOfTests = 1000

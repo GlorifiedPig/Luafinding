@@ -3,11 +3,14 @@
 !.gitignore
 !luafinding.lua
 !vector.lua
+!heap.lua
 !/love-example/
 !/performance/
 !README.md
 love-example/luafinding.lua
 love-example/vector.lua
+love-example/heap.lua
 performance/luafinding.lua
 performance/vector.lua
+performance/heap.lua
 *.lnk

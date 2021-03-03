@@ -2,6 +2,7 @@
 -- Positions must be a table (or metatable) where table.x and table.y are accessible.
 
 require( "vector" )
+require( "heap" )
 
 Luafinding = {}
 
@@ -22,19 +23,6 @@ local function distance( start, finish )
     return short_axis_cost * math.min( x, y ) + math.max( x, y )
 end
 ]]--
-
-local function findLowest( set, scores )
-    local min, lowest = math.huge, nil
-
-    for node, _ in pairs( set ) do
-        local score = scores[node]
-        if score < min then
-            min, lowest = score, node
-        end
-    end
-
-    return lowest
-end
 
 local function positionIsOpen( pos, check )
     if type( check ) == "table" then
@@ -76,20 +64,24 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, gScore, hScore, fScore, reconstruction = {}, {}, {}, {}, {}, {}
+    local open, previousTbl, closed, gScore, hScore, fScore, reconstruction = Heap(), {}, {}, {}, {}, {}, {}
 
-    open[start] = false
+    previousTbl[start] = false
     gScore[start] = 0
     hScore[start] = distance( start, finish )
     fScore[start] = hScore[start]
 
-    while next( open ) do
-        local current = findLowest( open, fScore )
-        local previous = open[current]
-        open[current] = nil
+    open.Compare = function( a, b )
+        return fScore[a] < fScore[b]
+    end
+
+    open:Push( start )
+
+    while not open:Empty() do
+        local current = open:Pop()
         local currentId = current:ID()
         if not closed[currentId] then
-            reconstruction[currentId] = previous
+            reconstruction[currentId] = previousTbl[current]
 
             if current == finish then
                 local path = { current }
@@ -115,7 +107,8 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                         end
                         fScore[adjacent] = added_gScore + hScore[adjacent]
 
-                        open[adjacent] = current
+                        open:Push( adjacent )
+                        previousTbl[adjacent] = current
                     end
                 end
             end
