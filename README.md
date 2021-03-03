@@ -7,7 +7,7 @@ To run a performance test yourself, see `performance/performance.lua`. Move `lua
 ```md
 > luajit performance.lua
 Using seed 1614795006
-Building 100x100 sized map.
+Building 100 x 100 sized map.
 Generating 2000 random start/finish positions.
 Finding 1000 paths.
 Done in 0.309 seconds.
