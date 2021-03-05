@@ -26,7 +26,8 @@ for i = 1, numberOfTests * 2 do
 end
 
 print( string.format( "Finding %d paths.", numberOfTests ) )
-local function positionIsOpenFunc( x, y )
+local function positionIsOpenFunc( pos )
+    local x, y = pos.x, pos.y
     if not map[x] or not map[x][y] then return false end
     return map[x][y] > mapDensity
 end

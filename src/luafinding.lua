@@ -28,7 +28,7 @@ local function positionIsOpen( pos, check )
     if type( check ) == "table" then
         return check[pos.x] and check[pos.x][pos.y]
     elseif type( check ) == "function" then
-        return check( pos.x, pos.y ) or true
+        return check( pos ) or true
     end
 
     return true
