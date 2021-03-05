@@ -1,11 +1,9 @@
 /*
 /*/
 !.gitignore
-!luafinding.lua
-!vector.lua
-!heap.lua
 !/love-example/
 !/performance/
+!/src/
 !README.md
 love-example/luafinding.lua
 love-example/vector.lua
