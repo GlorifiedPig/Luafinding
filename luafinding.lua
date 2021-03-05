@@ -64,7 +64,7 @@ end
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
     if not positionIsOpen( finish, positionOpenCheck ) then return end
-    local open, closed, reconstruction = Heap(), {}, {}
+    local open, closed = Heap(), {}
 
     start.gScore = 0
     start.hScore = distance( start, finish )
@@ -80,15 +80,17 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
         local current = open:Pop()
         local currentId = current:ID()
         if not closed[currentId] then
-            reconstruction[current] = current.previous
-
             if current == finish then
-                local path = { current }
-                while reconstruction[path[#path]] do
-                    path[#path + 1] = reconstruction[path[#path]]
+                local path = {}
+                while true do
+                    if current.previous then
+                        table.insert( path, 1, current )
+                        current = current.previous
+                    else
+                        table.insert( path, 1, start )
+                        return path
+                    end
                 end
-                for i = 1, math.floor( #path / 2 ) do path[i], path[#path - i + 1] = path[#path - i + 1], path[i] end
-                return path, reconstruction
             end
 
             closed[currentId] = true
