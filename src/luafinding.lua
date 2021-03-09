@@ -24,15 +24,9 @@ local function distance( start, finish )
 end
 ]]--
 
-local function positionIsOpen( pos, check )
-    if type( check ) == "table" then
-        return check[pos.x] and check[pos.x][pos.y]
-    elseif type( check ) == "function" then
-        return check( pos ) or true
-    end
-
-    return true
-end
+local positionIsOpen
+local function positionIsOpenTable( pos, check ) return check[pos.x] and check[pos.x][pos.y] end
+local function positionIsOpenCustom( pos, check ) return check( pos ) or true end
 
 local adjacentPositions = {
     Vector( 0, -1 ),
@@ -63,6 +57,7 @@ end
 -- If it's a function it must have a return value of true or false depending on whether or not the position is open.
 -- If it's a table it should simply be a table of values such as "pos[x][y] = true".
 function Luafinding.FindPath( start, finish, positionOpenCheck )
+    positionIsOpen = type( positionOpenCheck ) == "table" and positionIsOpenTable or positionIsOpenCustom
     if not positionIsOpen( finish, positionOpenCheck ) then return end
     local open, closed = Heap(), {}
 
