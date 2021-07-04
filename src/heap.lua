@@ -16,10 +16,7 @@ end
 
 local function sortUp( heap, index )
     if index <= 1 then return end
-    local pIndex
-
-    if index % 2 == 0 then pIndex = index / 2
-    else pIndex = ( index - 1 ) / 2 end
+    local pIndex = index % 2 == 0 and index / 2 or ( index - 1 ) / 2
 
     if not heap.Compare( heap.Data[pIndex], heap.Data[index] ) then
         heap.Data[pIndex], heap.Data[index] = heap.Data[index], heap.Data[pIndex]
@@ -41,7 +38,7 @@ local function sortDown( heap, index )
 
     if not heap.Compare( heap.Data[index], heap.Data[minIndex] ) then
         heap.Data[index], heap.Data[minIndex] = heap.Data[minIndex], heap.Data[index]
-        sortDown( heap, minIndex ) 
+        sortDown( heap, minIndex )
     end
 end
 
