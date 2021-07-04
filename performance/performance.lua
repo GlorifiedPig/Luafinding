@@ -33,7 +33,7 @@ local function positionIsOpenFunc( pos )
 end
 local testStart = os.clock()
 for _ = 1, numberOfTests do
-    Luafinding.FindPath( table.remove( testPoints ), table.remove( testPoints ), map, positionIsOpenFunc )
+    Luafinding( table.remove( testPoints ), table.remove( testPoints ), map, positionIsOpenFunc )
 end
 local testEnd = os.clock()
 local totalSec = testEnd - testStart

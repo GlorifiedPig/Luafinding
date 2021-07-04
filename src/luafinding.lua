@@ -5,6 +5,18 @@ local Vector = require( "vector" )
 local Heap = require( "heap" )
 
 local Luafinding = {}
+Luafinding.__index = Luafinding
+
+-- This instantiates a new Luafinding class for usage later.
+-- "start" and "finish" should both be 2 dimensional vectors, or just a table with "x" and "y" keys. See the note at the top of this file.
+-- positionOpenCheck can be a function or a table.
+-- If it's a function it must have a return value of true or false depending on whether or not the position is open.
+-- If it's a table it should simply be a table of values such as "pos[x][y] = true".
+function Luafinding:Initialize( start, finish, positionOpenCheck )
+    local newPath = setmetatable( { Start = start, Finish = finish, PositionOpenCheck = positionOpenCheck }, Luafinding )
+    newPath:CalculatePath()
+    return newPath
+end
 
 local function distance( start, finish )
     local dx = start.x - finish.x
@@ -41,10 +53,10 @@ local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     return result
 end
 
--- positionOpenCheck can be a function or a table.
--- If it's a function it must have a return value of true or false depending on whether or not the position is open.
--- If it's a table it should simply be a table of values such as "pos[x][y] = true".
-function Luafinding.FindPath( start, finish, positionOpenCheck )
+-- This is the function used to actually calculate the path.
+-- It returns the calcated path table, or nil if it cannot find a path.
+function Luafinding:CalculatePath()
+    local start, finish, positionOpenCheck = self.Start, self.Finish, self.PositionOpenCheck
     if not positionOpenCheck then return end
     positionIsOpen = type( positionOpenCheck ) == "table" and positionIsOpenTable or positionIsOpenCustom
     if not positionIsOpen( finish, positionOpenCheck ) then return end
@@ -72,6 +84,7 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
                         current = current.previous
                     else
                         table.insert( path, 1, start )
+                        self.Path = path
                         return path
                     end
                 end
@@ -101,4 +114,34 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
     end
 end
 
-return Luafinding
+function Luafinding:GetPath()
+    return self.Path
+end
+
+function Luafinding:GetDistance()
+    local path = self.Path
+    if not path then return end
+    return distance( path[1], path[#path] )
+end
+
+function Luafinding:GetTiles()
+    local path = self.Path
+    if not path then return end
+    return #path
+end
+
+function Luafinding:__tostring()
+    local path = self.Path
+    local string = ""
+
+    if path then
+        for k, v in ipairs( path ) do
+            local formatted = ( k .. ": " .. v )
+            string = k == 1 and formatted or string .. "\n" .. formatted
+        end
+    end
+
+    return string
+end
+
+return setmetatable( Luafinding, { __call = function( self, ... ) return self:Initialize( ... ) end } )

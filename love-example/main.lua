@@ -22,7 +22,7 @@ local finish = Vector( mapSize, mapSize )
 local clickedTile = nil
 
 local function updatePath()
-    path = Luafinding.FindPath( start, finish, map )
+    path = Luafinding( start, finish, map ):GetPath()
 end
 
 local function randomizeMap()
@@ -33,7 +33,7 @@ local function randomizeMap()
         end
     end
 
-    for i = 1, math.random( 20, 100 ) do
+    for _ = 1, math.random( 20, 100 ) do
         local x = math.random( 1, mapSize - 2 )
         local y = math.random( 1, mapSize - 2 )
 
@@ -75,12 +75,12 @@ function love.load()
             if printEveryTest then
                 local startPos = table.remove( precalculatedPoints )
                 local endPos = table.remove( precalculatedPoints )
-                local foundPath = Luafinding.FindPath( startPos, endPos, map )
+                local foundPath = Luafinding( startPos, endPos, map ):GetPath()
                 local newOneTime = os.clock()
                 print( "Test #" .. i .. " took " .. newOneTime - oneTime .. " seconds.\nPath found: " .. tostring( type( foundPath ) == "table" ) .. "\nStart Position: " .. tostring( startPos ) .. "\nEnd Position: " .. tostring( endPos ) .. "\n\n" )
                 oneTime = newOneTime
             else
-                Luafinding.FindPath( table.remove( precalculatedPoints ), table.remove( precalculatedPoints ), map )
+                Luafinding( table.remove( precalculatedPoints ), table.remove( precalculatedPoints ), map ):GetPath()
             end
         end
         local timeTaken = os.clock() - startTime
@@ -104,7 +104,7 @@ function love.draw()
 
     if path then
         love.graphics.setColor( 0, 0.8, 0 )
-        for k, v in ipairs( path ) do
+        for _, v in ipairs( path ) do
             love.graphics.rectangle( "fill", ( v.x - 1 ) * tileSize, ( v.y - 1 ) * tileSize, tileSize, tileSize )
         end
         love.graphics.setColor( 0, 0, 0 )
@@ -126,10 +126,12 @@ function love.mousepressed( x, y, button )
             clickedTile = hoveredTile
             return
         end
+
         start = clickedTile
         finish = hoveredTile
         clickedTile = nil
         hoveredTile = nil
+
         updatePath()
     end
 end
