@@ -43,8 +43,7 @@ local function fetchOpenAdjacentNodes( pos, positionOpenCheck )
     local result = {}
 
     for i = 1, #adjacentPositions do
-    	local adjacent = adjacentPositions[i]
-        local adjacentPos = pos + adjacent
+        local adjacentPos = pos + adjacentPositions[i]
         if positionIsOpen( adjacentPos, positionOpenCheck ) then
             table.insert( result, adjacentPos )
         end
