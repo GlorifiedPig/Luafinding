@@ -1,5 +1,5 @@
 
-Heap = {}
+local Heap = {}
 Heap.__index = Heap
 
 local function findLowest( a, b )

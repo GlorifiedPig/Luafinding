@@ -6,8 +6,8 @@ function printTable( tbl )
 end
 
 local profile = require( "profile" )
-require( "vector" )
-require( "luafinding" )
+local Vector = require( "vector" )
+local Luafinding = require( "luafinding" )
 
 local map = {}
 
@@ -67,7 +67,7 @@ function love.load()
         local oneTime = os.clock()
 
         local precalculatedPoints = {}
-        for i = 1, timesToRun * 2 do
+        for _ = 1, timesToRun * 2 do
             table.insert( precalculatedPoints, Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ) )
         end
 

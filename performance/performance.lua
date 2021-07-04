@@ -1,6 +1,6 @@
 
-require( "vector" )
-require( "luafinding" )
+local Vector = require( "vector" )
+local Luafinding = require( "luafinding" )
 
 local map = {}
 local mapSize = 100
@@ -21,7 +21,7 @@ end
 
 print( string.format( "Generating %d random start/finish positions.", numberOfTests * 2 ) )
 local testPoints = {}
-for i = 1, numberOfTests * 2 do
+for _ = 1, numberOfTests * 2 do
     table.insert( testPoints, Vector( math.random( 1, mapSize ), math.random( 1, mapSize ) ) )
 end
 
@@ -32,7 +32,7 @@ local function positionIsOpenFunc( pos )
     return map[x][y] > mapDensity
 end
 local testStart = os.clock()
-for testNumber = 1, numberOfTests do
+for _ = 1, numberOfTests do
     Luafinding.FindPath( table.remove( testPoints ), table.remove( testPoints ), map, positionIsOpenFunc )
 end
 local testEnd = os.clock()

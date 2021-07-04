@@ -1,5 +1,5 @@
 
-Vector = {}
+local Vector = {}
 Vector.__index = Vector
 
 local function newVector( x, y )

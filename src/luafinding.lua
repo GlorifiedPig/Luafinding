@@ -1,28 +1,16 @@
 
 -- Positions must be a table (or metatable) where table.x and table.y are accessible.
 
-require( "vector" )
-require( "heap" )
+local Vector = require( "vector" )
+local Heap = require( "heap" )
 
-Luafinding = {}
+local Luafinding = {}
 
 local function distance( start, finish )
     local dx = start.x - finish.x
     local dy = start.y - finish.y
     return dx * dx + dy * dy
 end
-
---[[
-This could maybe be used in the future for shorter distances for more precise measurements, although the above function seems to work much faster and mostly fine.
-
-local short_axis_cost = math.sqrt( 2 ) - 1
-
-local function distance( start, finish )
-    local x = math.abs( start.x - finish.x )
-    local y = math.abs( start.y - finish.y )
-    return short_axis_cost * math.min( x, y ) + math.max( x, y )
-end
-]]--
 
 local positionIsOpen
 local function positionIsOpenTable( pos, check ) return check[pos.x] and check[pos.x][pos.y] end
@@ -112,3 +100,5 @@ function Luafinding.FindPath( start, finish, positionOpenCheck )
         end
     end
 end
+
+return Luafinding
