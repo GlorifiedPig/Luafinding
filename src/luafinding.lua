@@ -26,7 +26,7 @@ end
 
 local positionIsOpen
 local function positionIsOpenTable( pos, check ) return check[pos.x] and check[pos.x][pos.y] end
-local function positionIsOpenCustom( pos, check ) return check( pos ) or true end
+local function positionIsOpenCustom( pos, check ) return check( pos ) end
 
 local adjacentPositions = {
     Vector( 0, -1 ),
